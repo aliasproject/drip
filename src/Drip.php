@@ -28,7 +28,7 @@ class Drip
      * @param integer $drip_id - Current user Drip ID for update
      * @param array $custom_fields - Array of custom fields to save to user
      */
-    public function addSubscriber(string $email, int $drip_id = null, array $custom_fields = null)
+    public function addSubscriber(string $email, int $campaign_id = null, int $drip_id = null, array $custom_fields = null)
     {
         if ($drip_id) {
     		$subscriber_data = [
@@ -47,7 +47,15 @@ class Drip
 
         $data = ['subscribers' => [$subscriber_data]];
 
-        $this->makeRequest('subscribers', $data, true);
+        $url = ($campaign_id) ? 'campaigns/' . $campaign_id . '/subscribers' : 'subscribers';
+        return $this->makeRequest($url, $data, true);
+    }
+
+    public function isSubscriber(string $email)
+    {
+        $response = $this->makeRequest('subscribers/' . $email);
+
+    	return ($response->errors) ? false : true;
     }
 
     /**
@@ -59,7 +67,7 @@ class Drip
     protected function makeRequest(string $url, array $data = [], bool $post = false)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->endpoint . '/' . $this->account_id . '/' . $url . '?' . http_build_query($data));
+        curl_setopt($ch, CURLOPT_URL, $this->endpoint . '/' . $this->account_id . '/' . $url);
         curl_setopt($ch, CURLOPT_USERPWD, $this->token);
         curl_setopt($ch, CURLOPT_POST, $post);
         curl_setopt($ch, CURLOPT_USERAGENT, 'AliasProject/Drip (github.com/aliasproject/drip)');
@@ -73,9 +81,9 @@ class Drip
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
 
-        $result = curl_exec($ch);
+        $response = curl_exec($ch);
         curl_close($ch);
 
-        return $result;
+        return json_decode($response);
     }
 }
