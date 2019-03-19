@@ -47,7 +47,7 @@ class Drip
 
         $data = ['subscribers' => [$subscriber_data]];
 
-        $this->makeRequest(self::ENDPOINT . $this->account_id . '/subscribers', $data, true);
+        $this->makeRequest('subscribers', $data, true);
     }
 
     /**
@@ -59,7 +59,7 @@ class Drip
     protected function makeRequest(string $url, array $data = [], bool $post = false)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($data));
+        curl_setopt($ch, CURLOPT_URL, $this->endpoint . '/' . $this->account_id . '/' . $url . '?' . http_build_query($data));
         curl_setopt($ch, CURLOPT_USERPWD, $this->token);
         curl_setopt($ch, CURLOPT_POST, $post);
         curl_setopt($ch, CURLOPT_USERAGENT, 'AliasProject/Drip (github.com/aliasproject/drip)');
