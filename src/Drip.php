@@ -4,7 +4,7 @@ class Drip
 {
     protected $endpoint = 'https://api.getdrip.com/v2';
     private $account_id = null;
-    private $token = false;
+    private $api_key = false;
 
     /**
      * Create new instance
@@ -14,11 +14,11 @@ class Drip
      * @param string $business_name - Business Name
      * @param string $business_domain - Business Domain
      */
-    public function __construct(string $account_id, string $token)
+    public function __construct(string $account_id, string $api_key)
     {
         // Set Authentication
         $this->account_id = $account_id;
-        $this->token = $token;
+        $this->api_key = $api_key;
     }
 
     /**
@@ -60,7 +60,7 @@ class Drip
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($data));
-        curl_setopt($ch, CURLOPT_USERPWD, $pwd);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->api_key);
         curl_setopt($ch, CURLOPT_POST, $post);
         curl_setopt($ch, CURLOPT_USERAGENT, 'AliasProject/Drip (github.com/aliasproject/drip)');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
