@@ -25,12 +25,12 @@ class Drip
      * Add or update subscriber
      *
      * @param string $email - Subscriber Email
-     * @param integer $drip_id - Current user Drip ID for update
+     * @param string $drip_id - Current user Drip ID for update
      * @param array $custom_fields - Array of custom fields to save to user
      */
-    public function addSubscriber(string $email, int $campaign_id = null, int $drip_id = null, array $custom_fields = null)
+    public function addSubscriber(string $email, int $campaign_id = null, string $drip_id = null, array $custom_fields = null)
     {
-        if ($drip_id) {
+        if ($drip_id && !$campaign_id) {
     		$subscriber_data = [
 				'id' => $drip_id,
 				'new_email' => $email
@@ -46,16 +46,16 @@ class Drip
         }
 
         $data = ['subscribers' => [$subscriber_data]];
-
         $url = ($campaign_id) ? 'campaigns/' . $campaign_id . '/subscribers' : 'subscribers';
+
         return $this->makeRequest($url, $data, true);
     }
 
-    public function isSubscriber(string $email)
+    public function getSubscriber(string $email, int $campaign_id = null)
     {
         $response = $this->makeRequest('subscribers/' . $email);
 
-    	return ($response->errors) ? false : true;
+    	return (isset($response->errors)) ? false : true;
     }
 
     /**
